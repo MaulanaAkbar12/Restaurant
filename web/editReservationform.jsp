@@ -83,7 +83,7 @@
                             </select>
                         </div>
                     </div>
-                    <input type="submit" value="book now" class="btn" id="booknow">
+                    <input type="submit" value="edit reservation" class="btn" id="booknow">
                 </form> 
             </section>
             <!-- js sweetalert2 -->

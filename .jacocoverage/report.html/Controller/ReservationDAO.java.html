@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ReservationDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;Restoku&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">Controller</a> &gt; <span class="el_source">ReservationDAO.java</span></div><h1>ReservationDAO.java</h1><pre class="source lang-java linenums">package Controller;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import Database.DBConnection;
+import Model.Reservation;
+import Model.Done;
+
+<span class="nc" id="L10">public class ReservationDAO {</span>
+    
+    static Connection conn;
+    static PreparedStatement ps;
+    static ResultSet rs;
+    static String sql;
+    
+    public static int save(Reservation rs) {
+<span class="fc" id="L18">        int status = 0;</span>
+<span class="fc" id="L19">        Connection conn = null;</span>
+<span class="fc" id="L20">        PreparedStatement ps = null;</span>
+        
+<span class="pc bpc" id="L22" title="1 of 4 branches missed.">        if (rs.getFirst_name() == null || rs.getFirst_name().isEmpty()) {</span>
+<span class="fc" id="L23">            return status;</span>
+        }
+<span class="pc bpc" id="L25" title="2 of 4 branches missed.">        if (rs.getLast_name() == null || rs.getLast_name().isEmpty()) {</span>
+<span class="nc" id="L26">            return status;</span>
+        }
+<span class="pc bpc" id="L28" title="1 of 4 branches missed.">        if (rs.getPhone() == null || !rs.getPhone().matches(&quot;\\d{10,15}&quot;)) {</span>
+<span class="fc" id="L29">            return status; </span>
+        }
+<span class="pc bpc" id="L31" title="2 of 4 branches missed.">        if (rs.getEmail() == null || !rs.getEmail().contains(&quot;@&quot;)) {</span>
+<span class="nc" id="L32">            return status; </span>
+        }
+<span class="pc bpc" id="L34" title="2 of 4 branches missed.">        if (rs.getPeople() &lt; 1 || rs.getPeople() &gt; 10) {</span>
+<span class="nc" id="L35">            return status; </span>
+        }
+<span class="pc bpc" id="L37" title="2 of 4 branches missed.">        if (rs.getDate() == null || rs.getTime() == null) {</span>
+<span class="nc" id="L38">            return status;</span>
+        }
+        try {
+<span class="fc" id="L41">            conn = new DBConnection().setConnection();</span>
+<span class="fc" id="L42">            ps = conn.prepareStatement(&quot;insert into restoku_db.reservations (first_name, last_name, phone, email, people, reservation_date, reservation_time) VALUES (?, ?, ?, ?, ?, ?, ?)&quot;);</span>
+<span class="fc" id="L43">            ps.setString(1, rs.getFirst_name());</span>
+<span class="fc" id="L44">            ps.setString(2, rs.getLast_name());</span>
+<span class="fc" id="L45">            ps.setString(3, rs.getPhone());</span>
+<span class="fc" id="L46">            ps.setString(4, rs.getEmail());</span>
+<span class="fc" id="L47">            ps.setInt(5, rs.getPeople());</span>
+<span class="fc" id="L48">            ps.setString(6, (rs.getDate()));</span>
+<span class="fc" id="L49">            ps.setString(7, (rs.getTime()));</span>
+
+<span class="fc" id="L51">            status = ps.executeUpdate();</span>
+<span class="nc" id="L52">        } catch (SQLException e) {</span>
+<span class="nc" id="L53">            System.out.println(e);</span>
+<span class="fc" id="L54">        } </span>
+<span class="fc" id="L55">        return status;</span>
+    }
+    
+    public static List&lt;Reservation&gt; getAllRecords() {
+<span class="fc" id="L59">        List&lt;Reservation&gt; list = new ArrayList&lt;&gt;();</span>
+
+        try {
+<span class="fc" id="L62">            conn = new DBConnection().setConnection();</span>
+<span class="fc" id="L63">            ps = conn.prepareStatement(&quot;select * from restoku_db.reservations&quot;);</span>
+            ResultSet rsu;
+<span class="fc" id="L65">            rsu = ps.executeQuery();</span>
+<span class="fc bfc" id="L66" title="All 2 branches covered.">            while (rsu.next()) {</span>
+<span class="fc" id="L67">                Reservation r = new Reservation();</span>
+<span class="fc" id="L68">                r.setId_reservation(rsu.getInt(&quot;id_reservation&quot;));</span>
+<span class="fc" id="L69">                r.setFirst_name(rsu.getString(&quot;first_name&quot;));</span>
+<span class="fc" id="L70">                r.setLast_name(rsu.getString(&quot;last_name&quot;));</span>
+<span class="fc" id="L71">                r.setPhone(rsu.getString(&quot;phone&quot;));</span>
+<span class="fc" id="L72">                r.setEmail(rsu.getString(&quot;email&quot;));</span>
+<span class="fc" id="L73">                r.setPeople(rsu.getInt(&quot;people&quot;));</span>
+<span class="fc" id="L74">                r.setDate(rsu.getString(&quot;reservation_date&quot;));</span>
+<span class="fc" id="L75">                r.setTime(rsu.getString(&quot;reservation_time&quot;));</span>
+<span class="fc" id="L76">                list.add(r);</span>
+<span class="fc" id="L77">            }</span>
+<span class="nc" id="L78">        } catch (SQLException e) {</span>
+<span class="nc" id="L79">            System.out.println(e);</span>
+<span class="fc" id="L80">        }</span>
+<span class="fc" id="L81">        return list;</span>
+    }
+    
+    // Method to move reservation to done table
+    public static int moveToDone(int id) {
+<span class="fc" id="L86">        int status = 0;</span>
+        try {
+<span class="fc" id="L88">            conn = new DBConnection().setConnection();</span>
+
+            // Fetch the reservation by ID
+<span class="fc" id="L91">            ps = conn.prepareStatement(&quot;select * from restoku_db.reservations where id_reservation=?&quot;);</span>
+<span class="fc" id="L92">            ps.setInt(1, id);</span>
+<span class="fc" id="L93">            rs = ps.executeQuery();</span>
+            
+<span class="fc bfc" id="L95" title="All 2 branches covered.">            if (rs.next()) {</span>
+<span class="fc" id="L96">                Done done = new Done();</span>
+<span class="fc" id="L97">                done.setId_reservation(rs.getInt(&quot;id_reservation&quot;));</span>
+<span class="fc" id="L98">                done.setFirst_name(rs.getString(&quot;first_name&quot;));</span>
+<span class="fc" id="L99">                done.setLast_name(rs.getString(&quot;last_name&quot;));</span>
+<span class="fc" id="L100">                done.setPhone(rs.getString(&quot;phone&quot;));</span>
+<span class="fc" id="L101">                done.setEmail(rs.getString(&quot;email&quot;));</span>
+<span class="fc" id="L102">                done.setPeople(rs.getInt(&quot;people&quot;));</span>
+<span class="fc" id="L103">                done.setReservation_date(rs.getString(&quot;reservation_date&quot;));</span>
+<span class="fc" id="L104">                done.setReservation_time(rs.getString(&quot;reservation_time&quot;));</span>
+                
+                // Insert the reservation into done table
+<span class="fc" id="L107">                ps = conn.prepareStatement(&quot;insert into restoku_db.done (id_reservation, first_name, last_name, phone, email, people, reservation_date, reservation_time) values(?,?,?,?,?,?,?,?)&quot;);</span>
+<span class="fc" id="L108">                ps.setInt(1, done.getId_reservation());</span>
+<span class="fc" id="L109">                ps.setString(2, done.getFirst_name());</span>
+<span class="fc" id="L110">                ps.setString(3, done.getLast_name());</span>
+<span class="fc" id="L111">                ps.setString(4, done.getPhone());</span>
+<span class="fc" id="L112">                ps.setString(5, done.getEmail());</span>
+<span class="fc" id="L113">                ps.setInt(6, done.getPeople());</span>
+<span class="fc" id="L114">                ps.setString(7, done.getReservation_date());</span>
+<span class="fc" id="L115">                ps.setString(8, done.getReservation_time());</span>
+<span class="fc" id="L116">                ps.executeUpdate();</span>
+                
+                // Delete the reservation from the reservations table
+<span class="fc" id="L119">                ps = conn.prepareStatement(&quot;delete from restoku_db.reservations where id_reservation=?&quot;);</span>
+<span class="fc" id="L120">                ps.setInt(1, id);</span>
+<span class="fc" id="L121">                status = ps.executeUpdate();</span>
+            }
+<span class="nc" id="L123">        } catch (SQLException e) {</span>
+<span class="nc" id="L124">            System.out.println(e);</span>
+<span class="fc" id="L125">        }</span>
+<span class="fc" id="L126">        return status;</span>
+    }
+    
+    public static int update(Reservation rs) {
+<span class="fc" id="L130">        int status = 0;</span>
+        try {
+<span class="fc" id="L132">            conn = new DBConnection().setConnection();</span>
+<span class="fc" id="L133">            ps = conn.prepareStatement(&quot;update restoku_db.reservations set first_name=?, last_name=?, phone=?, email=?, people=?, reservation_date=?, reservation_time=? where id_reservation=?&quot;);</span>
+<span class="fc" id="L134">            ps.setString(1, rs.getFirst_name());</span>
+<span class="fc" id="L135">            ps.setString(2, rs.getLast_name());</span>
+<span class="fc" id="L136">            ps.setString(3, rs.getPhone());</span>
+<span class="fc" id="L137">            ps.setString(4, rs.getEmail());</span>
+<span class="fc" id="L138">            ps.setInt(5, rs.getPeople());</span>
+<span class="fc" id="L139">            ps.setString(6, rs.getDate());</span>
+<span class="fc" id="L140">            ps.setString(7, rs.getTime());</span>
+<span class="fc" id="L141">            ps.setInt(8, rs.getId_reservation());</span>
+<span class="fc" id="L142">            status = ps.executeUpdate();</span>
+<span class="nc" id="L143">        } catch (SQLException e) {</span>
+<span class="nc" id="L144">            System.out.println(e);</span>
+<span class="fc" id="L145">        }</span>
+<span class="fc" id="L146">        return status;</span>
+    }
+    
+    
+    public static Reservation getRecordById(int id) {
+<span class="fc" id="L151">        Reservation r = null;</span>
+        try {
+<span class="fc" id="L153">            conn = new DBConnection().setConnection();</span>
+<span class="fc" id="L154">            ps = conn.prepareStatement(&quot;select * from restoku_db.reservations where id_reservation=?&quot;);</span>
+<span class="fc" id="L155">            ps.setInt(1, id);</span>
+            ResultSet rsu;
+<span class="fc" id="L157">            rsu = ps.executeQuery();</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">            while (rsu.next()) {</span>
+<span class="fc" id="L159">                r = new Reservation();</span>
+<span class="fc" id="L160">                r.setId_reservation(rsu.getInt(&quot;id_reservation&quot;));</span>
+<span class="fc" id="L161">                r.setFirst_name(rsu.getString(&quot;first_name&quot;));</span>
+<span class="fc" id="L162">                r.setLast_name(rsu.getString(&quot;last_name&quot;));</span>
+<span class="fc" id="L163">                r.setPhone(rsu.getString(&quot;phone&quot;));</span>
+<span class="fc" id="L164">                r.setEmail(rsu.getString(&quot;email&quot;));</span>
+<span class="fc" id="L165">                r.setPeople(rsu.getInt(&quot;people&quot;));</span>
+<span class="fc" id="L166">                r.setDate(rsu.getString(&quot;reservation_date&quot;));</span>
+<span class="fc" id="L167">                r.setTime(rsu.getString(&quot;reservation_time&quot;));</span>
+            }
+<span class="nc" id="L169">        } catch (SQLException e) {</span>
+<span class="nc" id="L170">            System.out.println(e);</span>
+<span class="fc" id="L171">        }</span>
+<span class="fc" id="L172">        return r;</span>
+    }
+    
+    
+    public static List&lt;Reservation&gt; searchRecords(String keyword) {
+<span class="fc" id="L177">        List&lt;Reservation&gt; list = new ArrayList&lt;&gt;();</span>
+        try {
+<span class="fc" id="L179">            conn = new DBConnection().setConnection();</span>
+<span class="fc" id="L180">            sql = &quot;SELECT * FROM restoku_db.reservations where first_name LIKE ? OR last_name LIKE ? OR phone LIKE ? OR email LIKE ?&quot;;</span>
+<span class="fc" id="L181">            ps = conn.prepareStatement(sql);</span>
+<span class="fc" id="L182">            String searchPattern = &quot;%&quot; + keyword + &quot;%&quot;;</span>
+<span class="fc" id="L183">            ps.setString(1, searchPattern);</span>
+<span class="fc" id="L184">            ps.setString(2, searchPattern);</span>
+<span class="fc" id="L185">            ps.setString(3, searchPattern);</span>
+<span class="fc" id="L186">            ps.setString(4, searchPattern);</span>
+<span class="fc" id="L187">            rs = ps.executeQuery();</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L189">                Reservation r = new Reservation();</span>
+<span class="fc" id="L190">                r.setId_reservation(rs.getInt(&quot;id_reservation&quot;));</span>
+<span class="fc" id="L191">                r.setFirst_name(rs.getString(&quot;first_name&quot;));</span>
+<span class="fc" id="L192">                r.setLast_name(rs.getString(&quot;last_name&quot;));</span>
+<span class="fc" id="L193">                r.setPhone(rs.getString(&quot;phone&quot;));</span>
+<span class="fc" id="L194">                r.setEmail(rs.getString(&quot;email&quot;));</span>
+<span class="fc" id="L195">                r.setPeople(rs.getInt(&quot;people&quot;));</span>
+<span class="fc" id="L196">                r.setDate(rs.getString(&quot;reservation_date&quot;));</span>
+<span class="fc" id="L197">                r.setTime(rs.getString(&quot;reservation_time&quot;));</span>
+<span class="fc" id="L198">                list.add(r);</span>
+<span class="fc" id="L199">            }</span>
+<span class="fc" id="L200">            rs.close();</span>
+<span class="fc" id="L201">            ps.close();</span>
+<span class="fc" id="L202">            conn.close();</span>
+<span class="nc" id="L203">        } catch (Exception e) {</span>
+<span class="nc" id="L204">            e.printStackTrace();</span>
+<span class="fc" id="L205">        }</span>
+<span class="fc" id="L206">        return list;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

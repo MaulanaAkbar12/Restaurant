@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LoginServlet.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;Restoku&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">Servlet</a> &gt; <span class="el_source">LoginServlet.java</span></div><h1>LoginServlet.java</h1><pre class="source lang-java linenums">package Servlet;
+
+import Database.DBConnection;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+public class LoginServlet extends HttpServlet {
+    static Connection conn;
+    static PreparedStatement ps;
+    static ResultSet rs;
+    static String sql;
+<span class="fc" id="L19">    public LoginServlet() { </span>
+<span class="fc" id="L20">    }</span>
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+<span class="nc" id="L23">        String uName = request.getParameter(&quot;username&quot;);</span>
+<span class="nc" id="L24">        String pass = request.getParameter(&quot;password&quot;);</span>
+
+        try {
+<span class="nc" id="L27">            conn = new DBConnection().setConnection();</span>
+<span class="nc" id="L28">            ps = conn.prepareStatement(&quot;select * from restoku_db.user where username = ? and password = ?&quot;);</span>
+<span class="nc" id="L29">            ps.setString(1, uName);</span>
+<span class="nc" id="L30">            ps.setString(2, pass);</span>
+            ResultSet rsu;
+<span class="nc" id="L32">            rsu = ps.executeQuery();</span>
+            
+<span class="nc bnc" id="L34" title="All 2 branches missed.">            if (rsu.next()) {</span>
+<span class="nc" id="L35">                request.setAttribute(&quot;status&quot;, &quot;success&quot;);</span>
+<span class="nc" id="L36">                RequestDispatcher rd = request.getRequestDispatcher(&quot;success.jsp&quot;);</span>
+<span class="nc" id="L37">                rd.forward(request, response);</span>
+<span class="nc" id="L38">            } else {</span>
+<span class="nc" id="L39">                request.setAttribute(&quot;status&quot;, &quot;fail&quot;);</span>
+<span class="nc" id="L40">                RequestDispatcher rd = request.getRequestDispatcher(&quot;error.jsp&quot;);</span>
+<span class="nc" id="L41">                rd.forward(request, response);</span>
+            }
+            
+<span class="nc" id="L44">        } catch (Exception e) {</span>
+<span class="nc" id="L45">            response.sendRedirect(&quot;error.jsp&quot;);</span>
+<span class="nc" id="L46">        }</span>
+<span class="nc" id="L47">    }</span>
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+<span class="nc" id="L52">        processRequest(request, response);</span>
+<span class="nc" id="L53">    }</span>
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+<span class="nc" id="L58">        processRequest(request, response);</span>
+<span class="nc" id="L59">    }</span>
+
+    @Override
+    public String getServletInfo() {
+<span class="nc" id="L63">        return &quot;Short description&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

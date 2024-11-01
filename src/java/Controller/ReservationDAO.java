@@ -14,44 +14,44 @@ public class ReservationDAO {
     static ResultSet rs;
     static String sql;
     
-    // Other methods...
-
     public static int save(Reservation rs) {
         int status = 0;
+        Connection conn = null;
+        PreparedStatement ps = null;
+        
+        if (rs.getFirst_name() == null || rs.getFirst_name().isEmpty()) {
+            return status;
+        }
+        if (rs.getLast_name() == null || rs.getLast_name().isEmpty()) {
+            return status;
+        }
+        if (rs.getPhone() == null || !rs.getPhone().matches("\\d{10,15}")) {
+            return status; 
+        }
+        if (rs.getEmail() == null || !rs.getEmail().contains("@")) {
+            return status; 
+        }
+        if (rs.getPeople() < 1 || rs.getPeople() > 10) {
+            return status; 
+        }
+        if (rs.getDate() == null || rs.getTime() == null) {
+            return status;
+        }
         try {
             conn = new DBConnection().setConnection();
-            ps = conn.prepareStatement("insert into restoku_db.reservations (first_name, last_name, phone, email, people, reservation_date, reservation_time) values(?,?,?,?,?,?,?)");
+            ps = conn.prepareStatement("insert into restoku_db.reservations (first_name, last_name, phone, email, people, reservation_date, reservation_time) VALUES (?, ?, ?, ?, ?, ?, ?)");
             ps.setString(1, rs.getFirst_name());
             ps.setString(2, rs.getLast_name());
             ps.setString(3, rs.getPhone());
             ps.setString(4, rs.getEmail());
             ps.setInt(5, rs.getPeople());
-            ps.setString(6, rs.getDate());
-            ps.setString(7, rs.getTime());
+            ps.setString(6, (rs.getDate()));
+            ps.setString(7, (rs.getTime()));
+
             status = ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
-        }
-        return status;
-    }
-    
-    public static int update(Reservation rs) {
-        int status = 0;
-        try {
-            conn = new DBConnection().setConnection();
-            ps = conn.prepareStatement("update restoku_db.reservations set first_name=?, last_name=?, phone=?, email=?, people=?, reservation_date=?, reservation_time=? where id_reservation=?");
-            ps.setString(1, rs.getFirst_name());
-            ps.setString(2, rs.getLast_name());
-            ps.setString(3, rs.getPhone());
-            ps.setString(4, rs.getEmail());
-            ps.setInt(5, rs.getPeople());
-            ps.setString(6, rs.getDate());
-            ps.setString(7, rs.getTime());
-            ps.setInt(8, rs.getId_reservation());
-            status = ps.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
+        } 
         return status;
     }
     
@@ -79,31 +79,6 @@ public class ReservationDAO {
             System.out.println(e);
         }
         return list;
-    }
-    
-    public static Reservation getRecordById(int id) {
-        Reservation r = null;
-        try {
-            conn = new DBConnection().setConnection();
-            ps = conn.prepareStatement("select * from restoku_db.reservations where id_reservation=?");
-            ps.setInt(1, id);
-            ResultSet rsu;
-            rsu = ps.executeQuery();
-            while (rsu.next()) {
-                r = new Reservation();
-                r.setId_reservation(rsu.getInt("id_reservation"));
-                r.setFirst_name(rsu.getString("first_name"));
-                r.setLast_name(rsu.getString("last_name"));
-                r.setPhone(rsu.getString("phone"));
-                r.setEmail(rsu.getString("email"));
-                r.setPeople(rsu.getInt("people"));
-                r.setDate(rsu.getString("reservation_date"));
-                r.setTime(rsu.getString("reservation_time"));
-            }
-        } catch (SQLException e) {
-            System.out.println(e);
-        }
-        return r;
     }
     
     // Method to move reservation to done table
@@ -150,6 +125,53 @@ public class ReservationDAO {
         }
         return status;
     }
+    
+    public static int update(Reservation rs) {
+        int status = 0;
+        try {
+            conn = new DBConnection().setConnection();
+            ps = conn.prepareStatement("update restoku_db.reservations set first_name=?, last_name=?, phone=?, email=?, people=?, reservation_date=?, reservation_time=? where id_reservation=?");
+            ps.setString(1, rs.getFirst_name());
+            ps.setString(2, rs.getLast_name());
+            ps.setString(3, rs.getPhone());
+            ps.setString(4, rs.getEmail());
+            ps.setInt(5, rs.getPeople());
+            ps.setString(6, rs.getDate());
+            ps.setString(7, rs.getTime());
+            ps.setInt(8, rs.getId_reservation());
+            status = ps.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return status;
+    }
+    
+    
+    public static Reservation getRecordById(int id) {
+        Reservation r = null;
+        try {
+            conn = new DBConnection().setConnection();
+            ps = conn.prepareStatement("select * from restoku_db.reservations where id_reservation=?");
+            ps.setInt(1, id);
+            ResultSet rsu;
+            rsu = ps.executeQuery();
+            while (rsu.next()) {
+                r = new Reservation();
+                r.setId_reservation(rsu.getInt("id_reservation"));
+                r.setFirst_name(rsu.getString("first_name"));
+                r.setLast_name(rsu.getString("last_name"));
+                r.setPhone(rsu.getString("phone"));
+                r.setEmail(rsu.getString("email"));
+                r.setPeople(rsu.getInt("people"));
+                r.setDate(rsu.getString("reservation_date"));
+                r.setTime(rsu.getString("reservation_time"));
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return r;
+    }
+    
     
     public static List<Reservation> searchRecords(String keyword) {
         List<Reservation> list = new ArrayList<>();

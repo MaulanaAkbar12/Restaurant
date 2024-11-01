@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DoneDAO.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;Restoku&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">Controller</a> &gt; <span class="el_source">DoneDAO.java</span></div><h1>DoneDAO.java</h1><pre class="source lang-java linenums">package Controller;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import Database.DBConnection;
+import Model.Done;
+
+<span class="nc" id="L9">public class DoneDAO {</span>
+
+    static Connection conn;
+    static PreparedStatement ps;
+    static ResultSet rs;
+    static String sql;
+
+    public static List&lt;Done&gt; getAllRecordsdone() {
+<span class="fc" id="L17">        List&lt;Done&gt; list = new ArrayList&lt;&gt;();</span>
+
+        try {
+<span class="fc" id="L20">            conn = new DBConnection().setConnection();</span>
+<span class="fc" id="L21">            ps = conn.prepareStatement(&quot;SELECT * FROM restoku_db.done&quot;);</span>
+<span class="fc" id="L22">            rs = ps.executeQuery();</span>
+<span class="fc bfc" id="L23" title="All 2 branches covered.">            while (rs.next()) {</span>
+<span class="fc" id="L24">                Done d = new Done();</span>
+<span class="fc" id="L25">                d.setId_reservation(rs.getInt(&quot;id_reservation&quot;));</span>
+<span class="fc" id="L26">                d.setFirst_name(rs.getString(&quot;first_name&quot;));</span>
+<span class="fc" id="L27">                d.setLast_name(rs.getString(&quot;last_name&quot;));</span>
+<span class="fc" id="L28">                d.setPhone(rs.getString(&quot;phone&quot;));</span>
+<span class="fc" id="L29">                d.setEmail(rs.getString(&quot;email&quot;));</span>
+<span class="fc" id="L30">                d.setPeople(rs.getInt(&quot;people&quot;));</span>
+<span class="fc" id="L31">                d.setReservation_date(rs.getString(&quot;reservation_date&quot;));</span>
+<span class="fc" id="L32">                d.setReservation_time(rs.getString(&quot;reservation_time&quot;));</span>
+<span class="fc" id="L33">                list.add(d);</span>
+<span class="fc" id="L34">            }</span>
+<span class="fc" id="L35">            rs.close();</span>
+<span class="fc" id="L36">            ps.close();</span>
+<span class="fc" id="L37">            conn.close();</span>
+<span class="nc" id="L38">        } catch (SQLException e) {</span>
+<span class="nc" id="L39">            System.out.println(&quot;Error while retrieving all done records: &quot; + e.getMessage());</span>
+<span class="fc" id="L40">        } </span>
+<span class="fc" id="L41">        return list;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

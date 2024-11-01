@@ -88,12 +88,16 @@ function validatePeople() {
 
 function validateDateTime() {
     const datePicker = document.getElementById('datePicker');
-    const timePicker = document.getElementById('timePicker');
-
-    datePicker.min = '2019-01-01';
-
-    const today = new Date().toISOString().split('T')[0];
-    datePicker.max = today;
+    const today = new Date();
+    const todayStr = today.toISOString().split('T')[0];
+    const selectedDate = new Date(datePicker.value);
+    
+    // Check if selected date is valid and not before today
+    if (datePicker.value === '' || selectedDate < today) {
+        showError("Date cannot be before today");
+        datePicker.value = ''; // Clear the invalid date
+        return false;
+    }
 
     return true;
 }

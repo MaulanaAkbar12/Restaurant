@@ -13,6 +13,13 @@ public class UserDAO {
     // Method to save a new user
     public static int save(User user) {
         int status = 0;
+          
+        if (user.getUsername() == null || user.getUsername().isEmpty()) {
+            return status;
+        }
+        if (user.getPassword() == null || user.getPassword().isEmpty()) {
+            return status;
+        }
         try {
             conn = new DBConnection().setConnection();
             ps = conn.prepareStatement("INSERT INTO restoku_db.user (username, password) VALUES(?, ?)");
@@ -21,9 +28,6 @@ public class UserDAO {
             status = ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
-        } finally {
-            try { if (ps != null) ps.close(); } catch (SQLException e) { System.out.println(e); }
-            try { if (conn != null) conn.close(); } catch (SQLException e) { System.out.println(e); }
         }
         return status;
     }
@@ -45,10 +49,7 @@ public class UserDAO {
             }
         } catch (SQLException e) {
             System.out.println(e);
-        } finally {
-            try { if (ps != null) ps.close(); } catch (SQLException e) { System.out.println(e); }
-            try { if (conn != null) conn.close(); } catch (SQLException e) { System.out.println(e); }
-        }
+        } 
         return list;
     }
 
@@ -68,10 +69,7 @@ public class UserDAO {
             }
         } catch (SQLException e) {
             System.out.println(e);
-        } finally {
-            try { if (ps != null) ps.close(); } catch (SQLException e) { System.out.println(e); }
-            try { if (conn != null) conn.close(); } catch (SQLException e) { System.out.println(e); }
-        }
+        } 
         return user;
     }
 
@@ -85,10 +83,7 @@ public class UserDAO {
             status = ps.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e);
-        } finally {
-            try { if (ps != null) ps.close(); } catch (SQLException e) { System.out.println(e); }
-            try { if (conn != null) conn.close(); } catch (SQLException e) { System.out.println(e); }
-        }
+        } 
         return status;
     }
 }
